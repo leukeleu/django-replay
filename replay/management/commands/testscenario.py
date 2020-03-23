@@ -28,7 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             scenarios = []
-            for name in options['scenario']:
+            for name in options.get('scenario', []):
                 scenario = Scenario.objects.get(name=name)
                 scenarios.append(scenario)
         except Scenario.DoesNotExist:
@@ -105,6 +105,6 @@ class Command(BaseCommand):
         response = func(path, data)
         status_code = str(response.status_code)
         redirect = '300' <= status_code < '400'
-        content = response.url if redirect else response.content
+        content = getattr(response, 'url', response['Location']) if redirect else response.content
 
         return status_code, content
