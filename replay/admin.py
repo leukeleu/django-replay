@@ -6,7 +6,21 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.shortcuts import redirect
-from django.utils.html import format_html, format_html_join
+try:
+    from django.utils.html import format_html, format_html_join
+except ImportError:
+    from django.utils.html import conditional_escape
+    def format_html(format_string, *args, **kwargs):
+        args_safe = map(conditional_escape, args)
+        kwargs_safe = {k: conditional_escape(v) for (k, v) in six.iteritems(kwargs)}
+        return mark_safe(format_string.format(*args_safe, **kwargs_safe))
+
+    def format_html_join(sep, format_string, args_generator):
+        return mark_safe(conditional_escape(sep).join(
+            format_html(format_string, *tuple(args))
+                for args in args_generator))
+
+
 from django.utils.safestring import mark_safe
 
 from replay.models import Action, Validator, Scenario
