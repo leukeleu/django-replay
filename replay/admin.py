@@ -198,7 +198,7 @@ class ActionInline(admin.StackedInline):
         url = reverse('admin:replay_action_change', args=(action.id,))
         return format_html('<a href="{}">{}</a>', url, action)
 
-    def validators(self, action):
+    def active_validators(self, action):
         validators = Validator.objects.filter(action=action)
         validators = validators.order_by('order', 'id')
         iterable = ((validator.pattern,) for validator in validators)
@@ -219,12 +219,12 @@ class ActionInline(admin.StackedInline):
         'files',
         'status_code',
         'content',
-        'validators',
+        'active_validators',
     )
     form = ActionAdminForm
     readonly_fields = (
         'action_link',
-        'validators',
+        'active_validators',
     )
 
 class ScenarioAdminForm(forms.ModelForm):
