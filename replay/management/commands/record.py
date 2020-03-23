@@ -16,9 +16,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from django.conf import settings
-        iterator = itertools.chain(
-            ('replay.middleware.RecorderMiddleware',),
-            settings.MIDDLEWARE,
-        )
-        settings.MIDDLEWARE = tuple(iterator)
+        if hasattr(settings, 'MIDDLEWARE'):
+            iterator = itertools.chain(
+                ('replay.middleware.RecorderMiddleware',),
+                settings.MIDDLEWARE,
+            )
+            settings.MIDDLEWARE = tuple(iterator)
+        else:
+            iterator = itertools.chain(
+                ('replay.middleware.RecorderMiddleware',),
+                settings.MIDDLEWARE_CLASSES,
+            )
+            settings.MIDDLEWARE_CLASSES = tuple(iterator)
         call_command('runserver')
