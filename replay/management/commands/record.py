@@ -28,4 +28,4 @@ class Command(BaseCommand):
                 settings.MIDDLEWARE_CLASSES,
             )
             settings.MIDDLEWARE_CLASSES = tuple(iterator)
-        call_command('runserver')
+        call_command('runserver', *args, **options)
